@@ -36,8 +36,8 @@ class ApiService {
       } else {
         return {
           'success': false,
-          'message': decoded['message'] ??
-              'Login gagal (${response.statusCode})',
+          'message':
+              decoded['message'] ?? 'Login gagal (${response.statusCode})',
         };
       }
     } catch (e) {
@@ -201,7 +201,7 @@ class ApiService {
       final decoded = jsonDecode(response.body);
 
       if (response.statusCode == 200 && decoded['success'] == true) {
-        return {'success': true, 'data': decoded['user']};
+        return {'success': true, 'data': decoded['data'] ?? decoded['user']};
       } else {
         return {
           'success': false,
@@ -214,7 +214,7 @@ class ApiService {
     }
   }
 
- /// ---------- UPDATE PROFILE (NAMA SAJA) ----------
+  /// UPDATE PROFILE (NAMA SAJA)
   static Future<Map<String, dynamic>> updateProfile({
     required String email,
     required String name,
@@ -253,6 +253,43 @@ class ApiService {
       };
     }
   }
+
+  // ===========================================================
+  //                          LOGOUT  
+  // ===========================================================
+  static Future<Map<String, dynamic>> logoutUser({
+    required String email,
+  }) async {
+    final url = Uri.parse('$baseUrl/api/auth/logout');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email}),
+      );
+
+      final decoded = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && decoded['success'] == true) {
+        return {
+          'success': true,
+          'message': decoded['message'] ?? 'Logout berhasil',
+        };
+      } else {
+        return {
+          'success': false,
+          'message': decoded['message'] ??
+              'Logout gagal (status: ${response.statusCode})',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Terjadi kesalahan: $e',
+      };
+    }
+  }
 }
 
 /// =============================================================
@@ -271,15 +308,15 @@ class _TestAPIState extends State<TestAPI> {
   Future<void> checkConnection() async {
     try {
       final response =
-          await http.get(Uri.parse('$ApiService.baseUrl/api/test'));
+          await http.get(Uri.parse('${ApiService.baseUrl}/api/test'));
 
       final decoded = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
         setState(() => result = decoded['message']);
       } else {
-        setState(() =>
-            result = "Gagal terhubung (${response.statusCode})");
+        setState(
+            () => result = "Gagal terhubung (${response.statusCode})");
       }
     } catch (e) {
       setState(() => result = "Error: $e");

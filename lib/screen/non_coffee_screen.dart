@@ -73,25 +73,25 @@ class NonCoffeeScreen extends StatelessWidget {
                 child: ListView(
                   children: [
                     itemDrink(
-                      image: "assets/thai_tea.png",
+                      image: "assets/img/thai_tea.png",
                       title: "Thai Tea",
                       category: "Non-Coffee",
                       price: "Rp xx",
                     ),
                     itemDrink(
-                      image: "assets/matcha.png",
+                      image: "assets/img/macha_milk.png",
                       title: "Milk Matcha",
                       category: "Non-Coffee",
                       price: "Rp xx",
                     ),
                     itemDrink(
-                      image: "assets/taro.png",
+                      image: "assets/img/taro.png",
                       title: "Taro-Berry Velvet",
                       category: "Non-Coffee",
                       price: "Rp xx",
                     ),
                     itemDrink(
-                      image: "assets/lemontea.png",
+                      image: "assets/img/lemon_tea.png",
                       title: "Lemon Tea",
                       category: "Non-Coffee",
                       price: "Rp xx",

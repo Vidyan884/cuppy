@@ -10,8 +10,8 @@ import 'notification_screen.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
     super.key,
-    this.userName = 'Asep',
-    this.userEmail = 'asep@example.com',
+    this.userName = '',
+    this.userEmail = 'akhmadvidyan@gmail.com',
   });
 
   /// nama & email user yang login (sementara ada default)

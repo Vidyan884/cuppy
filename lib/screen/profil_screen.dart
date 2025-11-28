@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import '../service/api_service.dart';
 import 'account_info_screen.dart';
+import 'login_screen.dart';
+import 'kebijakan_privasi_screen.dart';
+import 'ketentuan_layanan_screen.dart';
 
 class ProfilScreen extends StatefulWidget {
   const ProfilScreen({
@@ -8,7 +12,6 @@ class ProfilScreen extends StatefulWidget {
     required this.initialEmail,
   });
 
-  /// nama & email yang dipakai waktu login
   final String initialName;
   final String initialEmail;
 
@@ -29,6 +32,122 @@ class _ProfilScreenState extends State<ProfilScreen> {
     _email = widget.initialEmail;
   }
 
+  // ============================================================
+  //                      LOGOUT POPUP
+  // ============================================================
+  void _showLogoutDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black54,
+      builder: (ctx) {
+        return Center(
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              width: MediaQuery.of(ctx).size.width * 0.8,
+              padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "Yakin mau keluar?",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 22),
+
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      onPressed: () async {
+                        Navigator.of(ctx).pop();
+
+                        final res =
+                            await ApiService.logoutUser(email: _email);
+
+                        if (!mounted) return;
+
+                        if (res['success'] != true) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                res['message'] ?? 'Logout gagal',
+                              ),
+                            ),
+                          );
+                          return;
+                        }
+
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const LoginScreen(),
+                          ),
+                          (route) => false,
+                        );
+                      },
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Colors.red, width: 1.8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(26),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: const Text(
+                        "Yakin",
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(
+                            color: Color(0xFFBDBDBD), width: 1.5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(26),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: const Text(
+                        "Gak jadi deh",
+                        style: TextStyle(
+                          color: Color(0xFF757575),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // ============================================================
+  //                        UI PROFIL
+  // ============================================================
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +155,6 @@ class _ProfilScreenState extends State<ProfilScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // ---------- HEADER IMAGE ----------
             Container(
               width: double.infinity,
               height: 180,
@@ -48,7 +166,6 @@ class _ProfilScreenState extends State<ProfilScreen> {
               ),
             ),
 
-            // ---------- PROFILE PHOTO ----------
             Transform.translate(
               offset: const Offset(0, -50),
               child: Column(
@@ -66,21 +183,29 @@ class _ProfilScreenState extends State<ProfilScreen> {
                         ),
                       ],
                     ),
-                    // kalau asset-mu sering error, sementara bisa pake backgroundColor saja
                     child: const CircleAvatar(
                       radius: 55,
                       backgroundColor: Color(0xFFA4E5C2),
-                      // backgroundImage: AssetImage("assets/img/profile.png"),
                     ),
                   ),
                   const SizedBox(height: 12),
 
-                  // NAMA DINAMIS
                   Text(
                     _name,
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  const SizedBox(height: 4),
+
+                  // 🔥 TAMBAHAN SATU-SATUNYA (email tampil)
+                  Text(
+                    _email,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey,
                     ),
                   ),
                 ],
@@ -89,12 +214,10 @@ class _ProfilScreenState extends State<ProfilScreen> {
 
             const SizedBox(height: 10),
 
-            // ---------- MENU LIST ----------
             _MenuButton(
               icon: Icons.person_outline,
               text: "Informasi Akun",
               onTap: () async {
-                // buka halaman informasi akun, kirim nama & email sekarang
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -105,7 +228,6 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   ),
                 );
 
-                // kalau halaman balik bawa data baru, update profil
                 if (result != null && result is Map && mounted) {
                   setState(() {
                     _name = result['name'] ?? _name;
@@ -118,9 +240,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
             _MenuButton(
               icon: Icons.lock_outline,
               text: "Ganti Password",
-              onTap: () {
-                // (punya flowmu sendiri)
-              },
+              onTap: () {},
             ),
 
             _MenuButton(
@@ -128,26 +248,40 @@ class _ProfilScreenState extends State<ProfilScreen> {
               text: "Pengaturan Notifikasi",
               onTap: () {},
             ),
+
             _MenuButton(
               icon: Icons.privacy_tip_outlined,
               text: "Kebijakan Privasi",
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const KebijakanPrivasiScreen(),
+                  ),
+                );
+              },
             ),
+
             _MenuButton(
               icon: Icons.description_outlined,
               text: "Ketentuan Layanan",
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const KetentuanLayananScreen(),
+                  ),
+                );
+              },
             ),
 
             _MenuButton(
               icon: Icons.logout,
               text: "Log Out",
-              onTap: () {
-                // nanti tinggal isi logic logout
-              },
+              onTap: _showLogoutDialog,
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
           ],
         ),
       ),

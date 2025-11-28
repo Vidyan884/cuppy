@@ -11,7 +11,7 @@ class CoffeeScreen extends StatelessWidget {
         Product(
           name: "Signature Cream Brew",
           category: "Coffee",
-          imagePath: "assets/coffee1.png",
+          imagePath: "assets/img/kopi_1.png",
           description:
               "Perpaduan sempurna antara espresso yang kuat dan susu lembut, "
               "dengan lapisan krim khas untuk rasa yang halus dan kaya. "
@@ -20,7 +20,7 @@ class CoffeeScreen extends StatelessWidget {
         Product(
           name: "Americano",
           category: "Coffee",
-          imagePath: "assets/coffee2.png",
+          imagePath: "assets/img/americano_1.png",
           description:
               "Espresso berkualitas tinggi yang dipadukan dengan air panas "
               "sehingga menghasilkan rasa kopi yang kuat namun tetap ringan.",
@@ -28,7 +28,7 @@ class CoffeeScreen extends StatelessWidget {
         Product(
           name: "Caramel Swirl Latte",
           category: "Coffee",
-          imagePath: "assets/coffee3.png",
+          imagePath: "assets/img/caramel_1.png",
           description:
               "Latte lembut dengan sirup karamel manis dan tekstur susu yang creamy.",
         ),

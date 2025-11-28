@@ -15,14 +15,14 @@ class _CartScreenState extends State<CartScreen> {
       "category": "Coffee",
       "price": 35000,
       "qty": 1,
-      "image": "assets/kopi 1.png", // ganti sesuai asset kamu
+      "image": "assets/img/kopi_1.png", // ganti sesuai asset kamu
     },
     {
       "name": "Blush Bite Croissant",
       "category": "Food",
       "price": 22000,
       "qty": 1,
-      "image": "assets/makanan 1.png",
+      "image": "assets/img/makanan_1.png",
     }
   ];
 
